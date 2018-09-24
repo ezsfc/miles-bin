@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+'use strict'
+
+const endpoint = 'https://www.ana.co.jp/ja/jp/amc/reference/tameru/flightmile/dom/chart.html'
+const ua = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+
+const cheerio = require('cheerio')
+const log = require('fancy-log')
+const got = require('got')
+const v = require('voca')
+const _ = require('lodash')
+const numeral = require('numeral')
+
+!async function() {
+  try {
+    const headers = { 'User-Agent': ua }
+    const { body } = await got(endpoint, headers)
+    const $ = cheerio.load(body)
+    const contents = $('#contents .toggle-box').toArray()
+
+    contents.map(content => {
+      const baseAirport = v($('h3', content).text())
+        .trim()
+        .replace('発着路線', '')
+        .value()
+      console.log(baseAirport)
+
+      const routes = $('tr', content).toArray()
+      routes
+        .filter(el => $('th', el).length === 0)
+        .forEach(el => {
+          const airport = v.trim($('td:first-of-type', el).text())
+          const miles = $('td:nth-of-type(n+2)', el)
+            .toArray()
+            .map(el => v.trim($(el).text()))
+            .map(text => numeral(text).value())
+          console.log('   --> ' + airport + ' [' + miles + ']')
+        })
+    })
+
+  } catch (err) {
+    log.error(err)
+  }
+}()
+
+// vim: se sw=2 ts=2 sts=2 et ft=javascript :
