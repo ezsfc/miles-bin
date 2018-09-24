@@ -1,0 +1,11 @@
+{
+  "name": "ana-mile",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:pine/ana-mile.git",
+  "author": "Pine Mizune <pinemz@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "cheerio": "^1.0.0-rc.2"
+  }
+}
