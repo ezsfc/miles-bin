@@ -1,6 +1,6 @@
 {
   "name": "@ezsfc/miles-bin",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "ANA miles scraper.",
   "bin": "./bin/cli.js",
   "files": [
