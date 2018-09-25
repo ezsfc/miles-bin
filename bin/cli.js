@@ -51,7 +51,7 @@ function transform(contents) {
           const destinations = airports.filterByKeyword(route.destination)
           return destinations.map(({ iata: destination }) => ({
             origin,
-            destination: destination,
+            destination,
             miles: route.miles,
           }))
         })
