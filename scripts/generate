@@ -11,6 +11,12 @@ const v = require('voca')
 const _ = require('lodash')
 const numeral = require('numeral')
 
+// const airports = {
+// }
+// const airportGroups = {
+//   '東京': ['HND', 'NRT']
+// }
+
 
 async function fetchRawData() {
   const headers = { 'User-Agent': ua }
@@ -38,6 +44,8 @@ async function fetchRawData() {
     })
   return contents
 }
+
+
 
 
 !async function() {
