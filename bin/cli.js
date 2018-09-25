@@ -4,13 +4,14 @@
 const endpoint = 'https://www.ana.co.jp/ja/jp/amc/reference/tameru/flightmile/dom/chart.html'
 const ua = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
 
+
 const cheerio = require('cheerio')
 const got = require('got')
 const v = require('voca')
 const _ = require('lodash')
 const numeral = require('numeral')
 
-const airports = require('../lib/airports')
+const airports = require('@ezsfc/airports')
 
 
 async function fetch() {
@@ -67,7 +68,7 @@ function transform(contents) {
     const routes = transform(contents)
     console.log(JSON.stringify(routes, null, '  '))
   } catch (err) {
-    log.error(err)
+    console.error(err)
   }
 }()
 
