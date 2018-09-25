@@ -11,32 +11,39 @@ const v = require('voca')
 const _ = require('lodash')
 const numeral = require('numeral')
 
-!async function() {
-  try {
-    const headers = { 'User-Agent': ua }
-    const { body } = await got(endpoint, headers)
-    const $ = cheerio.load(body)
-    const contents = $('#contents .toggle-box').toArray()
 
-    contents.map(content => {
+async function fetchRawData() {
+  const headers = { 'User-Agent': ua }
+  const { body } = await got(endpoint, headers)
+  const $ = cheerio.load(body)
+  const contents = $('#contents .toggle-box')
+    .toArray()
+    .map(content => {
       const baseAirport = v($('h3', content).text())
         .trim()
         .replace('発着路線', '')
         .value()
-      console.log(baseAirport)
-
-      const routes = $('tr', content).toArray()
-      routes
+      const routes = $('tr', content)
+        .toArray()
         .filter(el => $('th', el).length === 0)
-        .forEach(el => {
+        .map(el => {
           const airport = v.trim($('td:first-of-type', el).text())
           const miles = $('td:nth-of-type(n+2)', el)
             .toArray()
             .map(el => v.trim($(el).text()))
             .map(text => numeral(text).value())
-          console.log('   --> ' + airport + ' [' + miles + ']')
+          return { airport, miles }
         })
+      return { baseAirport, routes }
     })
+  return contents
+}
+
+
+!async function() {
+  try {
+    const contents = await fetchRawData()
+    console.log(contents)
 
   } catch (err) {
     log.error(err)
