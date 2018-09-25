@@ -1,7 +1,7 @@
 {
-  "name": "@ezsfc/miles-gen",
+  "name": "@ezsfc/miles-bin",
   "version": "1.0.0",
-  "description": "ANA miles generator.",
+  "description": "ANA miles scraper.",
   "bin": "./bin/cli.js",
   "files": [
     "bin",
@@ -22,11 +22,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ezsfc/miles-gen"
+    "url": "https://github.com/ezsfc/miles-bin"
   },
   "bugs": {
-    "url": "https://github.com/ezsfc/miles-gen/issues"
+    "url": "https://github.com/ezsfc/miles-bin/issues"
   },
-  "homepage": "https://github.com/ezsfc/miles-gen",
+  "homepage": "https://github.com/ezsfc/miles-bin",
   "license": "MIT"
 }
