@@ -5,17 +5,12 @@ const endpoint = 'https://www.ana.co.jp/ja/jp/amc/reference/tameru/flightmile/do
 const ua = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
 
 const cheerio = require('cheerio')
-const log = require('fancy-log')
 const got = require('got')
 const v = require('voca')
 const _ = require('lodash')
 const numeral = require('numeral')
 
-const airports = {
-}
-const airportGroups = {
-  '東京': ['HND', 'NRT']
-}
+const airports = require('../lib/airports')
 
 
 async function fetch() {
@@ -25,7 +20,7 @@ async function fetch() {
   const contents = $('#contents .toggle-box')
     .toArray()
     .map(content => {
-      const baseAirport = v($('h3', content).text())
+      const origin = v($('h3', content).text())
         .trim()
         .replace('発着路線', '')
         .value()
@@ -33,14 +28,14 @@ async function fetch() {
         .toArray()
         .filter(el => $('th', el).length === 0)
         .map(el => {
-          const airport = v.trim($('td:first-of-type', el).text())
+          const destination = v.trim($('td:first-of-type', el).text())
           const miles = $('td:nth-of-type(n+2)', el)
             .toArray()
             .map(el => v.trim($(el).text()))
             .map(text => numeral(text).value())
-          return { airport, miles }
+          return { destination, miles }
         })
-      return { baseAirport, routes }
+      return { origin, routes }
     })
   return contents
 }
@@ -49,18 +44,19 @@ async function fetch() {
 function transform(contents) {
   return _(contents)
     .map(content => {
-      const baseAirports = airportGroups[content.baseAirport] || []
-      return baseAirports.map(baseAirport => {
+      const origins = airports.filterByKeyword(content.origin)
+      return origins.map(({ iata: origin }) => {
         return content.routes.map(route => {
-          return {
-            origin: baseAirport,
-            destination: route.airport,
+          const destinations = airports.filterByKeyword(route.destination)
+          return destinations.map(({ iata: destination }) => ({
+            origin,
+            destination: destination,
             miles: route.miles,
-          }
+          }))
         })
       })
     })
-    .flatten()
+    .flattenDeep()
     .value()
 }
 
@@ -69,7 +65,7 @@ function transform(contents) {
   try {
     const contents = await fetch()
     const routes = transform(contents)
-    console.log(routes)
+    console.log(JSON.stringify(routes, null, '  '))
   } catch (err) {
     log.error(err)
   }
